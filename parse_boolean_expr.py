@@ -1,4 +1,5 @@
 from typing import List
+import unittest
 
 
 class Solution:
@@ -57,3 +58,19 @@ class Solution:
     @staticmethod
     def logical_not(condition: List[str]):
         return 't' if condition[0] == 'f' else 'f'
+
+
+class TestSolution(unittest.TestCase):
+
+    def setUp(self):
+        self.sol = Solution()
+
+    def test_parse_boolean_expr(self):
+        self.assertTrue(self.sol.parseBoolExpr('!(f)'))
+        self.assertTrue(self.sol.parseBoolExpr('|(f,t)'))
+        self.assertFalse(self.sol.parseBoolExpr('&(t,f)'))
+        self.assertFalse(self.sol.parseBoolExpr('|(&(t,f,t),!(t))'))
+
+
+if __name__ == '__main__':
+    unittest.main()
