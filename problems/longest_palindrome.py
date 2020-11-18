@@ -2,6 +2,7 @@ import unittest
 
 
 class Solution:
+    # TODO improve on O(n^3)
     def longestPalindrome(self, s: str) -> str:
         # let m be the length of the string
         m = len(s)
