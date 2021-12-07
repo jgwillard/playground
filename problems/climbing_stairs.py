@@ -1,4 +1,6 @@
+from typing import Dict
 import unittest
+import timeit
 
 
 class Solution:
@@ -21,6 +23,20 @@ class Solution:
             dp[i] = dp[i - 1] + dp[i - 2]
         return dp[n]
 
+    def climbStairsTopDown(self, n: int) -> int:
+        memo: Dict[int, int] = {}
+
+        def dp(i: int) -> int:
+            if i <= 2:
+                return i
+
+            if i not in memo:
+                memo[i] = dp(i - 1) + dp(i - 2)
+
+            return memo[i]
+
+        return dp(n)
+
 
 class TestSolution(unittest.TestCase):
     def setUp(self):
@@ -33,6 +49,21 @@ class TestSolution(unittest.TestCase):
         self.assertEqual(self.sol.climbStairs(4), 5)
         self.assertEqual(self.sol.climbStairs(10), 89)
 
+    def testclimbStairsTopDown(self):
+        self.assertEqual(self.sol.climbStairsTopDown(1), 1)
+        self.assertEqual(self.sol.climbStairsTopDown(2), 2)
+        self.assertEqual(self.sol.climbStairsTopDown(3), 3)
+        self.assertEqual(self.sol.climbStairsTopDown(4), 5)
+        self.assertEqual(self.sol.climbStairsTopDown(10), 89)
+
 
 if __name__ == "__main__":
+    sol = Solution()
+    # TODO why is the difference between top down and bottom up not a
+    # constant factor? What is the complexity of the number of procedure
+    # calls in the top down implementation?
+    print(timeit.timeit(lambda: sol.climbStairs(5)))
+    print(timeit.timeit(lambda: sol.climbStairsTopDown(5)))
+    print(timeit.timeit(lambda: sol.climbStairs(10)))
+    print(timeit.timeit(lambda: sol.climbStairsTopDown(10)))
     unittest.main()

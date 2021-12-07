@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 import unittest
 
 
@@ -25,18 +25,42 @@ class Solution:
             dp[i] = max(nums[i] + dp[i - 2], dp[i - 1])
         return dp[n - 1]
 
+    def robTopDown(self, nums: List[int]) -> int:
+        n = len(nums)
+        memo: Dict[int, int] = {}
+
+        def dp(i: int) -> int:
+            if i == 0:
+                return nums[0]
+
+            if i == 1:
+                return max(nums[0], nums[1])
+
+            if i not in memo:
+                memo[i] = max(nums[i] + dp(i - 2), dp(i - 1))
+
+            return memo[i]
+
+        return dp(n - 1)
+
 
 class TestSolution(unittest.TestCase):
     def setUp(self):
         self.sol = Solution()
 
     def testRob(self):
-        self.assertEqual(self.sol.rob([]), 0)
         self.assertEqual(self.sol.rob([0]), 0)
         self.assertEqual(self.sol.rob([0, 1]), 1)
         self.assertEqual(self.sol.rob([1, 2, 3, 1]), 4)
         self.assertEqual(self.sol.rob([2, 7, 9, 3, 1]), 12)
         self.assertEqual(self.sol.rob([1, 2, 3, 1, 4, 28, 137, 2, 18]), 163)
+
+    def testRobTopDown(self):
+        self.assertEqual(self.sol.robTopDown([0]), 0)
+        self.assertEqual(self.sol.robTopDown([0, 1]), 1)
+        self.assertEqual(self.sol.robTopDown([1, 2, 3, 1]), 4)
+        self.assertEqual(self.sol.robTopDown([2, 7, 9, 3, 1]), 12)
+        self.assertEqual(self.sol.robTopDown([1, 2, 3, 1, 4, 28, 137, 2, 18]), 163)
 
 
 if __name__ == "__main__":
