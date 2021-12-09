@@ -1,5 +1,7 @@
+from functools import lru_cache
 from typing import Dict, List
 import unittest
+from timeit import timeit
 
 
 class Solution:
@@ -35,6 +37,25 @@ class Solution:
 
         return dp(0, 0)
 
+    def maximumScoreAutoMemoized(self, nums: List[int], multipliers: List[int]) -> int:
+        n = len(nums)
+        m = len(multipliers)
+
+        # lru_cache from functools automatically memoizes the function
+        @lru_cache(2000)
+        def dp(i: int, left: int) -> int:
+            if i == m:
+                return 0
+
+            right = n - 1 - (i - left)
+
+            return max(
+                multipliers[i] * nums[left] + dp(i + 1, left + 1),
+                multipliers[i] * nums[right] + dp(i + 1, left),
+            )
+
+        return dp(0, 0)
+
 
 class TestSolution(unittest.TestCase):
     def setUp(self):
@@ -46,6 +67,19 @@ class TestSolution(unittest.TestCase):
             self.sol.maximumScore([-5, -3, -3, -2, 7, 1], [-10, -5, 3, 4, 6]), 102
         )
 
+    def testMaximumScoreAutoMemoized(self):
+        self.assertEqual(self.sol.maximumScoreAutoMemoized([1, 2, 3], [3, 2, 1]), 14)
+        self.assertEqual(
+            self.sol.maximumScoreAutoMemoized(
+                [-5, -3, -3, -2, 7, 1], [-10, -5, 3, 4, 6]
+            ),
+            102,
+        )
+
 
 if __name__ == "__main__":
+    sol = Solution()
+    # NOTE manual memo beats lru_cache handily
+    print(timeit(lambda: sol.maximumScore([1, 2, 3], [3, 2, 1])), 1000)
+    print(timeit(lambda: sol.maximumScoreAutoMemoized([1, 2, 3], [3, 2, 1])), 1000)
     unittest.main()
