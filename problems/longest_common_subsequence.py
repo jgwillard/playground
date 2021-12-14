@@ -6,18 +6,17 @@ class Solution:
         n = len(text1)
         m = len(text2)
 
-        def dp(i: int, j: int) -> int:
+        # n rows, m columns
+        dp = [[0] * m for _ in range(0, n)]
 
-            if i < 0 or j < 0:
-                return 0
+        for i in range(0, n):
+            for j in range(0, m):
+                if text1[i] == text2[j]:
+                    dp[i][j] = 1 + max(dp[i - 1][j], dp[i][j - 1])
+                else:
+                    dp[i][j] = max(dp[i][j - 1], dp[i - 1][j])
 
-            if text1[i] == text2[j]:
-                return 1 + dp(i - 1, j - 1)
-
-            return max(dp(i, j - 1), dp(i - 1, j))
-
-        # right to left
-        return dp(n - 1, m - 1)
+        return dp[n - 1][m - 1]
 
 
 class TestSolution(unittest.TestCase):
