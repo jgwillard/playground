@@ -27,6 +27,11 @@ class TestSolution(unittest.TestCase):
         self.assertEqual(self.sol.longestCommonSubsequence("abcde", "ace"), 3)
         self.assertEqual(self.sol.longestCommonSubsequence("abc", "abc"), 3)
         self.assertEqual(self.sol.longestCommonSubsequence("abc", "def"), 0)
+        self.assertEqual(self.sol.longestCommonSubsequence("abcd", "def"), 1)
+        self.assertEqual(self.sol.longestCommonSubsequence("abc", "cdef"), 1)
+        self.assertEqual(self.sol.longestCommonSubsequence("mbsbinin", "jmjkbkjkv"), 2)
+        self.assertEqual(self.sol.longestCommonSubsequence("bsbininm", "jmjkbkjkv"), 1)
+        self.assertEqual(self.sol.longestCommonSubsequence("bsbminin", "jmjkbkjkv"), 1)
 
 
 if __name__ == "__main__":
