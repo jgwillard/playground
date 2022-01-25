@@ -12,6 +12,8 @@ class Solution:
         n = len(matrix[0])
         maximal_square_side = 0
 
+        memo = [[0] * (m + 1) for _ in range(0, n + 1)]
+
         def dp(i: int, j: int) -> int:
             # find the length of the side of the maximum square starting
             # at matrix[i][j] by recursively checking each of its
@@ -25,7 +27,9 @@ class Solution:
                 return 0
             if matrix[i][j] == "0":
                 return 0
-            return 1 + min(dp(i, j + 1), dp(i + 1, j + 1), dp(i + 1, j))
+            if not memo[i][j]:
+                memo[i][j] = 1 + min(dp(i, j + 1), dp(i + 1, j + 1), dp(i + 1, j))
+            return memo[i][j]
 
         for i in range(0, m):
             for j in range(0, n):
