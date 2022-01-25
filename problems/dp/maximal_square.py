@@ -12,7 +12,7 @@ class Solution:
         n = len(matrix[0])
         maximal_square_side = 0
 
-        memo = [[0] * (m + 1) for _ in range(0, n + 1)]
+        memo = [[0] * (n + 1) for _ in range(0, m + 1)]
 
         def dp(i: int, j: int) -> int:
             # find the length of the side of the maximum square starting
@@ -68,6 +68,18 @@ class TestSolution(unittest.TestCase):
                 ]
             ),
             9,
+        )
+        self.assertEqual(
+            self.sol.maximalSquare(
+                [
+                    ["1", "1", "1", "1", "1", "1", "1", "1"],
+                    ["1", "1", "1", "1", "1", "1", "1", "0"],
+                    ["1", "1", "1", "1", "1", "1", "1", "0"],
+                    ["1", "1", "1", "1", "1", "0", "0", "0"],
+                    ["0", "1", "1", "1", "1", "0", "0", "0"],
+                ],
+            ),
+            16,
         )
 
 
