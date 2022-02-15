@@ -9,9 +9,12 @@ class UnionFind(object):
         self.weight = [1] * size
 
     def find(self, x: int) -> int:
-        while self.root[x] != x:
-            x = self.root[x]
-        return x
+        if self.root[x] == x:
+            return x
+        # path compression: if the examined node is not a root, set its
+        # parent to be the root so that future lookups take O(1) time
+        self.root[x] = self.find(self.root[x])
+        return self.root[x]
 
     def union(self, x: int, y: int):
         i = self.find(x)
