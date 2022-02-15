@@ -6,6 +6,7 @@ class UnionFind(object):
     def __init__(self, size: int):
         self.root = [i for i in range(size)]
         self.count = size
+        self.weight = [1] * size
 
     def find(self, x: int) -> int:
         while self.root[x] != x:
@@ -15,9 +16,16 @@ class UnionFind(object):
     def union(self, x: int, y: int):
         i = self.find(x)
         j = self.find(y)
-        if i != j:
+        if i == j:
+            return
+        if self.weight[i] < self.weight[j]:
             self.root[i] = j
-            self.count -= 1
+            self.weight[j] += self.weight[i]
+        else:
+            self.root[j] = i
+            self.weight[i] += self.weight[j]
+
+        self.count -= 1
 
     def connected(self, x, y) -> bool:
         return self.find(x) == self.find(y)
