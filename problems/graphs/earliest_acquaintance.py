@@ -18,7 +18,7 @@ class TestSolution(unittest.TestCase):
     def setUp(self):
         self.sol = Solution()
 
-    def testMethodName(self):
+    def testEarliestAcq(self):
         self.assertEqual(
             self.sol.earliestAcq(
                 [
