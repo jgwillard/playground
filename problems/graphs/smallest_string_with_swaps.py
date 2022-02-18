@@ -9,12 +9,14 @@ class Solution:
     def smallestStringWithSwaps(self, s: str, pairs: List[List[int]]) -> str:
         n = len(s)
         uf = UnionFind(n)
+        roots = []
         for pair in pairs:
             uf.union(pair[0], pair[1])
         # now we have the indices organized into connected components
         connected_components: DefaultDict[int, List[str]] = defaultdict(list)
         for i in range(n):
-            connected_components[uf.find(i)].append(s[i])
+            roots.append(uf.find(i))
+            connected_components[roots[i]].append(s[i])
         # we need to sort each connected component alphabetically
         for root, chars in connected_components.items():
             connected_components[root] = sorted(chars)
@@ -23,7 +25,7 @@ class Solution:
         # at that index
         smallest_str = []
         for i in range(n):
-            smallest_str.append(connected_components[uf.find(i)].pop(0))
+            smallest_str.append(connected_components[roots[i]].pop(0))
 
         return "".join(smallest_str)
 
