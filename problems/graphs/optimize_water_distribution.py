@@ -1,27 +1,40 @@
 from typing import List
 import unittest
 
+from union_find import UnionFind
+
 
 class Solution:
     def minCostToSupplyWater(
         self, n: int, wells: List[int], pipes: List[List[int]]
     ) -> int:
+        # union find has size = n + 1 to accout for the virtual node
+        uf = UnionFind(n + 1)
+        total_cost = 0
+
         # add virtual node and connect it to each house with cost of
         # building a well in that house as its weight by appending
         # it to the pipes array
+        for i, cost in enumerate(wells):
+            pipes.append([n + 1, i + 1, cost])
 
-        # sort the pipes array by weight
+        # sort the pipes array by weight ascending (Kruskal's algorithm)
+        pipes_sorted = sorted(pipes, key=lambda pipe: pipe[2])
 
-        # for each pipe in pipes check if they are already connected via
-        # UnionFind.connected
+        for i, pipe in enumerate(pipes_sorted):
 
-        # if they are not connected, connect them via UnionFind.union
-        # and add the cost of the pipe to a counter
+            # if all houses are connected we are done
+            if uf.count == 1:
+                break
 
-        # check if UnionFind.count == 1 and if it does exit loop
+            # if the houses connected by the pipe with the lowest weight
+            #  are not connected, connect them via UnionFind.union and
+            # add the cost of the pipe to total
+            if not uf.connected(pipe[0] - 1, pipe[1] - 1):
+                uf.union(pipe[0] - 1, pipe[1] - 1)
+                total_cost += pipe[2]
 
-        # return cost counter
-        pass
+        return total_cost
 
 
 class TestSolution(unittest.TestCase):
