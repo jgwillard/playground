@@ -10,9 +10,6 @@ class Solution:
         Given a graph of n vertices and a list of edges, return true if
         there is a valid path between source and destination, else false
         """
-        if source == destination:
-            return True
-
         adjacency_list: Dict[int, List[int]] = {i: [] for i in range(0, n)}
         for edge in edges:
             adjacency_list[edge[0]].append(edge[1])
@@ -20,16 +17,22 @@ class Solution:
 
         # dfs
         processed = [False] * n
-        vertex_stack: List[int] = []
-        for v in adjacency_list[source]:
-            vertex_stack.append(v)
-        while len(vertex_stack) != 0:
+        vertex_stack: List[int] = [source]
+
+        while vertex_stack:
+            # get current node
             node = vertex_stack.pop()
+
+            # check if we have reached destination
             if node == destination:
                 return True
+
+            # add adjacent unprocessed nodes to stack
             for v in adjacency_list[node]:
                 if not processed[v]:
                     vertex_stack.append(v)
+
+            # mark current node as processed
             processed[node] = True
 
         return False
