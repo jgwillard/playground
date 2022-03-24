@@ -16,7 +16,7 @@ class Solution:
             adjacency_list[edge[1]].append(edge[0])
 
         # dfs
-        processed = [False] * n
+        discovered = [False] * n
         vertex_stack: List[int] = [source]
 
         while vertex_stack:
@@ -27,16 +27,11 @@ class Solution:
             if node == destination:
                 return True
 
-            if processed[node]:
-                continue
-
             # add adjacent unprocessed nodes to stack
             for v in adjacency_list[node]:
-                if not processed[v]:
+                if not discovered[v]:
                     vertex_stack.append(v)
-
-            # mark current node as processed
-            processed[node] = True
+                    discovered[v] = True
 
         return False
 

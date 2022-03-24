@@ -17,7 +17,7 @@ class Solution:
             adjacency_list[edge[1]].append(edge[0])
 
         # bfs
-        processed = [False] * n
+        discovered = [False] * n
         vertex_queue: Deque[int] = deque(maxlen=n)
         vertex_queue.append(source)
 
@@ -29,16 +29,11 @@ class Solution:
             if node == destination:
                 return True
 
-            if processed[node]:
-                continue
-
             # add adjacent unprocessed nodes to queue
             for v in adjacency_list[node]:
-                if not processed[v]:
+                if not discovered[v]:
                     vertex_queue.append(v)
-
-            # mark current node as processed
-            processed[node] = True
+                    discovered[v] = True
 
         return False
 
