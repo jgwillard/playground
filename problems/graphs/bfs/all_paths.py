@@ -1,4 +1,5 @@
-from typing import List
+from typing import Deque, List
+from collections import deque
 import unittest
 
 
@@ -8,14 +9,14 @@ class Solution:
         n = len(graph)
         target = n - 1
 
-        # dfs
+        # bfs
         valid_paths = []
-        # init stack with just the starting node
-        stack: List[List[int]] = [[0]]
+        queue: Deque[List[int]] = deque()
+        queue.append([0])
 
-        while stack:
-            # get current path from stack
-            path = stack.pop()
+        while queue:
+            # get current stack from queue
+            path = queue.popleft()
             # check each vertex reachable from the last vertex in the
             # current path
             for v in graph[path[-1]]:
@@ -24,12 +25,12 @@ class Solution:
                 # add a node that is reachable from the last vertex in
                 # the current path to the copy
                 new_path.append(v)
-                # put the new path on the stack
-                stack.append(new_path)
+                # put the new stack on the queue
+                queue.append(new_path)
                 # if the last vertex on the new path is the target, it
                 # is a valid path
                 if v == target:
-                    valid_paths.append(stack[-1])
+                    valid_paths.append(queue[-1])
 
         return valid_paths
 

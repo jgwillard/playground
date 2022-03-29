@@ -18,7 +18,7 @@ class Solution:
 
         # bfs
         discovered = [False] * n
-        vertex_queue: Deque[int] = deque(maxlen=n)
+        vertex_queue: Deque[int] = deque()
         vertex_queue.append(source)
 
         while vertex_queue:
