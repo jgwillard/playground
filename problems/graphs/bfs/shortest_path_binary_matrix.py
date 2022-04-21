@@ -18,6 +18,9 @@ class Solution:
 
         target = (n - 1, n - 1)
 
+        if target == (0, 0):
+            return 1
+
         adjacency_list: List[List[List[Tuple[int, int]]]] = []
 
         for i in range(n):
