@@ -13,6 +13,12 @@ class Solution:
 
         n = len(grid)
 
+        processed: List[List[bool]] = []
+        for i in range(n):
+            processed.append([])
+            for j in range(n):
+                processed[i].append(False)
+
         if grid[0][0] == 1 or grid[n - 1][n - 1] == 1:
             return -1
 
@@ -57,15 +63,32 @@ class Solution:
         queue: Deque[List[Tuple[int, int]]] = deque([[(0, 0)]])
 
         while queue:
+            # remove first path in queue
             path = queue.popleft()
-
+            # get the last node in the path
             i, j = path[-1]
+            # find all nodes connected to the last node
             for v in adjacency_list[i][j]:
-                new_path = list(path)
-                new_path.append(v)
-                queue.append(new_path)
+                row, col = v
+
+                # if the node has already been processed, we don't need
+                # to visit it again
+                if not processed[row][col]:
+                    # otherwise we make a copy of the old path and
+                    # append the node to it and add the new path to the
+                    # queue
+                    new_path = list(path)
+                    new_path.append(v)
+                    queue.append(new_path)
+
+                # we check if we have reached the target node and if we
+                # have we return the length of the path that got us here
                 if v == target:
                     return len(queue[-1])
+
+            # after we visit all a node's unvisited neighbors, we mark
+            # it as processed so we can skip it in the future
+            processed[i][j] = True
 
         return -1
 
