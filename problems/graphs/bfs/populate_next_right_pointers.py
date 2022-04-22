@@ -32,14 +32,17 @@ class Solution:
         queue: Deque[Node] = deque([root])
 
         while queue:
+            # check size of queue at each iteration before any more
+            # nodes are added to it so we know when we are at the end of
+            # a layer: when we are checking the root, the size will be
+            # one, etc.
             size = len(queue)
-            print("outer loop")
             for i in range(size):
-                print(i)
                 node = queue.popleft()
 
+                # if element is last in its row, we don't add a next
+                # pointer
                 if i < size - 1:
-                    print("setting next")
                     node.next = queue[0]
 
                 if node.left:
