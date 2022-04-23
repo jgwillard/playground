@@ -24,9 +24,6 @@ class Solution:
                 discovered[i].append(False)
                 distance[i].append(1)
 
-        if grid[0][0] == 1 or grid[n - 1][n - 1] == 1:
-            return -1
-
         target = (n - 1, n - 1)
 
         if target == (0, 0):
