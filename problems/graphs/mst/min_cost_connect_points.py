@@ -38,6 +38,7 @@ class UnionFind(object):
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
         n = len(points)
+        uf = UnionFind(n)
         points_dict: Dict[Tuple[int, int], int] = {}
         # edges are 3-tuples of two points and the distance between them
         edges: List[Tuple[List[int], List[int], int]] = []
@@ -48,7 +49,6 @@ class Solution:
                 x_j, y_j = points[j]
                 edges.append((points[i], points[j], abs(x_i - x_j) + abs(y_i - y_j)))
 
-        uf = UnionFind(len(edges))
         # sort edges by Manhattan distance
         edges_sorted = sorted(edges, key=lambda edge: edge[2])
         total_distance = 0
@@ -74,6 +74,10 @@ class TestSolution(unittest.TestCase):
             self.sol.minCostConnectPoints([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]), 20
         )
         self.assertEqual(self.sol.minCostConnectPoints([[3, 12], [-2, 5], [-4, 1]]), 18)
+        self.assertEqual(
+            self.sol.minCostConnectPoints([[-1000000, -1000000], [1000000, 1000000]]),
+            4000000,
+        )
 
 
 if __name__ == "__main__":
