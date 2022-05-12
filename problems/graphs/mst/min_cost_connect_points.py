@@ -52,6 +52,9 @@ class Solution:
         # sort edges by Manhattan distance
         edges_sorted = sorted(edges, key=lambda edge: edge[2])
         total_distance = 0
+        # Kruskal's algorithm: take the lowest weight edge and add it if
+        # it doesn't create a cycle; when the component is connected,
+        # the added edges constitute a minimum spanning tree
         for edge in edges_sorted:
             point_a, point_b, distance = edge
             x_i, y_i = point_a
