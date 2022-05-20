@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import unittest
 
 
@@ -48,7 +48,37 @@ class MinPriorityQueue(object):
 
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
-        pass
+        n = len(points)
+        # adjacency list is a list of lists of tuples such that for each
+        # index in the list, there is a list of tuples that represent
+        # the index of the connected point and the weight of the edge
+        # connecting the two points
+        adjacency_list: List[List[Tuple[int, int]]] = []
+        for i in range(n):
+            adjacency_list.append([])
+            x_i, y_i = points[i]
+            for j in range(n):
+                x_j, y_j = points[j]
+                if i != j:
+                    adjacency_list[i].append((j, abs(x_i - x_j) + abs(y_i - y_j)))
+
+        in_tree: List[bool] = [False] * n
+        total_weight = 0
+        tree_nodes = [0]
+        in_tree[0] = True
+        while len(tree_nodes) < n:
+            lowest_weight_edge = (-1, 10 ** 7)
+            for node in tree_nodes:
+                for edge in adjacency_list[node]:
+                    i, weight = edge
+                    if not in_tree[i] and weight < lowest_weight_edge[1]:
+                        lowest_weight_edge = edge
+            i, weight = lowest_weight_edge
+            in_tree[i] = True
+            tree_nodes.append(i)
+            total_weight += weight
+
+        return total_weight
 
 
 class TestSolution(unittest.TestCase):
