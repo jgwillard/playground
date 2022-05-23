@@ -48,6 +48,9 @@ class MinPriorityQueue(object):
 
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        # NOTE we are given that -10 ** 6 <= x_i, y_i <= 10 ** 6, so we
+        # can safely treat 10 ** 7 as the maximum possible integer
+        MAX_INT = 10 ** 7
         n = len(points)
         # adjacency list is a list of lists of tuples such that for each
         # index in the list, there is a list of tuples that represent
@@ -62,21 +65,37 @@ class Solution:
                 if i != j:
                     adjacency_list[i].append((j, abs(x_i - x_j) + abs(y_i - y_j)))
 
-        in_tree: List[bool] = [False] * n
+        in_tree = [False] * n
+        distance_to_tree = [MAX_INT] * n
         total_weight = 0
-        tree_nodes = [0]
-        in_tree[0] = True
-        while len(tree_nodes) < n:
-            lowest_weight_edge = (-1, 10 ** 7)
-            for node in tree_nodes:
-                for edge in adjacency_list[node]:
-                    i, weight = edge
-                    if not in_tree[i] and weight < lowest_weight_edge[1]:
-                        lowest_weight_edge = edge
-            i, weight = lowest_weight_edge
-            in_tree[i] = True
-            tree_nodes.append(i)
-            total_weight += weight
+
+        # start with vertex 0
+        start = 0
+        v = start
+        distance_to_tree[start] = 0
+
+        # we are adding v to the tree
+        while not in_tree[v]:
+            # we are adding v to the tree
+            in_tree[v] = True
+            total_weight += distance_to_tree[v]
+            # because v is the only node that has been added to the tree
+            # any changes to the distance list have to come from nodes
+            # connected to v
+            # check all nodes connected to v and if their distance from
+            # the tree has changed, update it
+            for edge in adjacency_list[v]:
+                i, weight = edge
+                if not in_tree[i] and weight < distance_to_tree[i]:
+                    distance_to_tree[i] = weight
+
+            # choose the next node to add by iterating through all and
+            # finding the one with the shortest distance to the tree
+            min_dist = MAX_INT
+            for i in range(n):
+                if not in_tree[i] and distance_to_tree[i] < min_dist:
+                    min_dist = distance_to_tree[i]
+                    v = i
 
         return total_weight
 
