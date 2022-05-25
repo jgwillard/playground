@@ -51,6 +51,7 @@ class Solution:
         # NOTE we are given that -10 ** 6 <= x_i, y_i <= 10 ** 6, so we
         # can safely treat 10 ** 7 as the maximum possible integer
         MAX_INT = 10 ** 7
+
         n = len(points)
         # adjacency list is a list of lists of tuples such that for each
         # index in the list, there is a list of tuples that represent
@@ -76,7 +77,6 @@ class Solution:
 
         # we are adding v to the tree
         while not in_tree[v]:
-            # we are adding v to the tree
             in_tree[v] = True
             total_weight += distance_to_tree[v]
             # because v is the only node that has been added to the tree
