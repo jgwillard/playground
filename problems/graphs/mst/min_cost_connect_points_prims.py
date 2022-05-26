@@ -4,7 +4,7 @@ import unittest
 
 class MinPriorityQueue(object):
     def __init__(self):
-        self.heap: List[int] = [0]
+        self.heap: List[Tuple[int, int]] = [(0, 0)]
         self.count = 0
 
     def isEmpty(self) -> bool:
@@ -16,11 +16,11 @@ class MinPriorityQueue(object):
         self.heap[j] = temp
 
     def _swim(self, k: int):
-        while k > 1 and self.heap[k] < self.heap[k // 2]:
+        while k > 1 and self.heap[k][1] < self.heap[k // 2][1]:
             self._swap(k, k // 2)
             k = k // 2
 
-    def insert(self, x: int):
+    def insert(self, x: Tuple[int, int]):
         self.count += 1
         self.heap.append(x)
         self._swim(self.count)
@@ -28,15 +28,15 @@ class MinPriorityQueue(object):
     def _sink(self, k: int):
         while k < self.count:
             j = 2 * k
-            if j + 1 <= self.count and self.heap[j] > self.heap[j + 1]:
+            if j + 1 <= self.count and self.heap[j][1] > self.heap[j + 1][1]:
                 j += 1
-            if j <= self.count and not self.heap[k] < self.heap[j]:
+            if j <= self.count and not self.heap[k][1] < self.heap[j][1]:
                 self._swap(j, k)
                 k = j
             else:
                 break
 
-    def removeMin(self) -> Optional[int]:
+    def removeMin(self) -> Optional[Tuple[int, int]]:
         if self.isEmpty():
             return None
         self._swap(1, self.count)
@@ -48,54 +48,37 @@ class MinPriorityQueue(object):
 
 class Solution:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
-        # NOTE we are given that -10 ** 6 <= x_i, y_i <= 10 ** 6, so we
-        # can safely treat 10 ** 7 as the maximum possible integer
-        MAX_INT = 10 ** 7
 
         n = len(points)
-        # adjacency list is a list of lists of tuples such that for each
-        # index in the list, there is a list of tuples that represent
-        # the index of the connected point and the weight of the edge
-        # connecting the two points
-        adjacency_list: List[List[Tuple[int, int]]] = []
-        for i in range(n):
-            adjacency_list.append([])
-            x_i, y_i = points[i]
+        in_tree = [False] * n
+        total_weight = 0
+        pq = MinPriorityQueue()
+
+        # start with vertex 0, cost 0
+        edge: Optional[Tuple[int, int]] = (0, 0)
+
+        # when we have added all points to the tree, we are done
+        count = n
+        # we are adding v to the tree
+        while edge and count > 0:
+            v, cost = edge
+            # choose the next node to add by pulling from the priority
+            # queue until we get a node not already in the tree
+            if in_tree[v]:
+                edge = pq.removeMin()
+                continue
+            in_tree[v] = True
+            count -= 1
+            total_weight += cost
+            # because we can only add to the tree by connecting to the first
+            # node, we can forgo the adjacency list and just add edges
+            # connected to the current node to the priority queue
+            x_i, y_i = points[v]
             for j in range(n):
                 x_j, y_j = points[j]
-                if i != j:
-                    adjacency_list[i].append((j, abs(x_i - x_j) + abs(y_i - y_j)))
-
-        in_tree = [False] * n
-        distance_to_tree = [MAX_INT] * n
-        total_weight = 0
-
-        # start with vertex 0
-        start = 0
-        v = start
-        distance_to_tree[start] = 0
-
-        # we are adding v to the tree
-        while not in_tree[v]:
-            in_tree[v] = True
-            total_weight += distance_to_tree[v]
-            # because v is the only node that has been added to the tree
-            # any changes to the distance list have to come from nodes
-            # connected to v
-            # check all nodes connected to v and if their distance from
-            # the tree has changed, update it
-            for edge in adjacency_list[v]:
-                i, weight = edge
-                if not in_tree[i] and weight < distance_to_tree[i]:
-                    distance_to_tree[i] = weight
-
-            # choose the next node to add by iterating through all and
-            # finding the one with the shortest distance to the tree
-            min_dist = MAX_INT
-            for i in range(n):
-                if not in_tree[i] and distance_to_tree[i] < min_dist:
-                    min_dist = distance_to_tree[i]
-                    v = i
+                if not in_tree[j]:
+                    # tuple of (index, cost)
+                    pq.insert((j, abs(x_i - x_j) + abs(y_i - y_j)))
 
         return total_weight
 
