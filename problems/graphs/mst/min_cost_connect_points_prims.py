@@ -1,3 +1,4 @@
+from heapq import heappop, heappush
 from typing import List, Optional, Tuple
 import unittest
 
@@ -52,7 +53,7 @@ class Solution:
         n = len(points)
         in_tree = [False] * n
         total_weight = 0
-        pq = MinPriorityQueue()
+        pq = []
 
         # start with vertex 0, cost 0
         edge: Optional[Tuple[int, int]] = (0, 0)
@@ -61,11 +62,11 @@ class Solution:
         count = n
         # we are adding v to the tree
         while edge and count > 0:
-            v, cost = edge
+            cost, v = edge
             # choose the next node to add by pulling from the priority
             # queue until we get a node not already in the tree
             if in_tree[v]:
-                edge = pq.removeMin()
+                edge = heappop(pq)
                 continue
             in_tree[v] = True
             count -= 1
@@ -77,8 +78,9 @@ class Solution:
             for j in range(n):
                 x_j, y_j = points[j]
                 if not in_tree[j]:
-                    # tuple of (index, cost)
-                    pq.insert((j, abs(x_i - x_j) + abs(y_i - y_j)))
+                    # tuple of (cost, index) so that heap remains sorted
+                    # by cost
+                    heappush(pq, (abs(x_i - x_j) + abs(y_i - y_j), j))
 
         return total_weight
 
