@@ -53,7 +53,7 @@ class Solution:
         n = len(points)
         in_tree = [False] * n
         total_weight = 0
-        pq = []
+        pq: List[Tuple[int, int]] = []
 
         # start with vertex 0, cost 0
         edge: Optional[Tuple[int, int]] = (0, 0)
