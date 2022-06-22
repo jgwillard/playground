@@ -53,18 +53,18 @@ class Solution:
             # connect to the node, but we don't allow negative weights
             # so this would necessarily be a longer path
             min_dist = MAX_INT
-            for i in range(n):
+            for i in range(n + 1):
                 if not in_tree[i] and dist[i] < min_dist:
                     min_dist = dist[i]
                     v = i
 
         # if not all nodes are reachable, return -1
-        for i in range(1, n):
+        for i in range(1, n + 1):
             if not discovered[i]:
                 return -1
 
         # if all nodes are reachable return the farthest distance from k
-        head, *tail = dist
+        _, *tail = dist
         return max(tail)
 
 
@@ -78,6 +78,12 @@ class TestSolution(unittest.TestCase):
         )
         self.assertEqual(self.sol.networkDelayTime([[1, 2, 1]], 2, 1), 1)
         self.assertEqual(self.sol.networkDelayTime([[1, 2, 1]], 2, 2), -1)
+        self.assertEqual(
+            self.sol.networkDelayTime(
+                [[1, 2, 1], [2, 3, 7], [1, 3, 4], [2, 1, 2]], 4, 1
+            ),
+            -1,
+        )
 
 
 if __name__ == "__main__":
