@@ -4,7 +4,7 @@ import unittest
 
 class Solution:
     def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
-        MAX_INT = 10 ** 6
+        MAX_INT = 10**6
         adjacency_list: Dict[int, List[Tuple[int, int]]] = {}
         for time in times:
             source, target, weight = time
@@ -16,7 +16,6 @@ class Solution:
         # track whether all nodes are reachable from k
         discovered = [False] * (n + 1)
 
-        # dijkstra's algorithm
         in_tree = [False] * (n + 1)
         dist = [MAX_INT] * (n + 1)
 
@@ -47,7 +46,7 @@ class Solution:
             # we then add a node to the tree by iterating through all
             # and choosing the one with the shortest distance to the
             # tree
-            # we know that this our path to this node is the shortest
+            # we know that our path to this node is the shortest
             # possible one, because any other path would have to go
             # through a longer path first and then add another edge to
             # connect to the node, but we don't allow negative weights
@@ -74,7 +73,8 @@ class TestSolution(unittest.TestCase):
 
     def testNetworkDelayTime(self):
         self.assertEqual(
-            self.sol.networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2), 2
+            self.sol.networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2),
+            2,
         )
         self.assertEqual(self.sol.networkDelayTime([[1, 2, 1]], 2, 1), 1)
         self.assertEqual(self.sol.networkDelayTime([[1, 2, 1]], 2, 2), -1)

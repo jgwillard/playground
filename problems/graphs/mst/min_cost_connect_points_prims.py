@@ -63,6 +63,7 @@ class Solution:
         # we are adding v to the tree
         while edge and count > 0:
             cost, v = edge
+            # Prim's algorithm:
             # choose the next node to add by pulling from the priority
             # queue until we get a node not already in the tree
             if in_tree[v]:
@@ -91,11 +92,18 @@ class TestSolution(unittest.TestCase):
 
     def testMinCostConnectPoints(self):
         self.assertEqual(
-            self.sol.minCostConnectPoints([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]), 20
+            self.sol.minCostConnectPoints(
+                [[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]
+            ),
+            20,
         )
-        self.assertEqual(self.sol.minCostConnectPoints([[3, 12], [-2, 5], [-4, 1]]), 18)
         self.assertEqual(
-            self.sol.minCostConnectPoints([[-1000000, -1000000], [1000000, 1000000]]),
+            self.sol.minCostConnectPoints([[3, 12], [-2, 5], [-4, 1]]), 18
+        )
+        self.assertEqual(
+            self.sol.minCostConnectPoints(
+                [[-1000000, -1000000], [1000000, 1000000]]
+            ),
             4000000,
         )
         self.assertEqual(
