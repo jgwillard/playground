@@ -7,7 +7,7 @@ class Solution:
     def findCheapestPrice(
         self, n: int, flights: List[List[int]], src: int, dst: int, k: int
     ) -> int:
-        MAX_INT = 10**4
+        MAX_INT = 10**4 + 1
         # dict of edges from a node -- node: [(node, weight)]
         adjacency_list: Dict[int, List[Tuple[int, int]]] = {}
         for flight in flights:
@@ -17,8 +17,6 @@ class Solution:
             else:
                 adjacency_list[source] = [(target, weight)]
 
-        discovered = [False] * (n + 1)
-        in_tree = [False] * (n + 1)
         dist = [MAX_INT] * (n + 1)
         queue: Deque[int] = deque()
 
@@ -29,28 +27,28 @@ class Solution:
         hops = 0
 
         while queue:
-            v = queue.popleft()
+            size = len(queue)
             # we have exceeded max number of stops so exit loop
             if hops > k:
                 break
-            in_tree[v] = True
-            discovered[v] = True
 
-            # if v in adjacency_list:
-            for edge in adjacency_list[v]:
-                # i is a node adjacent to v
-                i, weight = edge
-                queue.append(i)
+            for i in range(size):
+                v = queue.popleft()
+                if v in adjacency_list:
+                    for edge in adjacency_list[v]:
+                        # i is a node adjacent to v
+                        j, weight = edge
+                        queue.append(j)
 
-                if dist[v] + weight < dist[i]:
-                    # on first discovery of i, dist[i] = MAX_INT, so
-                    # this will be updated to the weight of the outgoing
-                    # edge from src to i
-                    # on subsequent iterations, we only update if the
-                    # total weight from src to v + the weight from v to
-                    # i is less than our previously recorded weight from
-                    # src to i
-                    dist[i] = dist[v] + weight
+                        if dist[v] + weight < dist[j]:
+                            # on first discovery of i, dist[i] = MAX_INT, so
+                            # this will be updated to the weight of the outgoing
+                            # edge from src to i
+                            # on subsequent iterations, we only update if the
+                            # total weight from src to v + the weight from v to
+                            # i is less than our previously recorded weight from
+                            # src to i
+                            dist[j] = dist[v] + weight
 
             hops += 1
 
@@ -121,6 +119,33 @@ class TestSolution(unittest.TestCase):
                 3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 0
             ),
             500,
+        )
+        self.assertEqual(
+            self.sol.findCheapestPrice(
+                5,
+                [
+                    [4, 1, 1],
+                    [1, 2, 3],
+                    [0, 3, 2],
+                    [0, 4, 10],
+                    [3, 1, 1],
+                    [1, 4, 3],
+                ],
+                2,
+                1,
+                1,
+            ),
+            -1,
+        )
+        self.assertEqual(
+            self.sol.findCheapestPrice(
+                4,
+                [[0, 1, 1], [0, 2, 5], [1, 2, 1], [2, 3, 1]],
+                0,
+                3,
+                1,
+            ),
+            6,
         )
 
 
