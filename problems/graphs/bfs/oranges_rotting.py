@@ -17,7 +17,9 @@ class Solution:
                 elif grid[i][j] == 1:
                     fresh_oranges_count += 1
 
-        def get_adjacent_squares(square: Tuple[int, int]) -> List[Tuple[int, int]]:
+        def get_adjacent_squares(
+            square: Tuple[int, int]
+        ) -> List[Tuple[int, int]]:
             x, y = square
             ret: List[Tuple[int, int]] = []
             # top
@@ -48,8 +50,7 @@ class Solution:
                         fresh_oranges_count -= 1
                         queue.append((x, y))
 
-                if i == size - 1:
-                    minutes_elapsed += 1
+            minutes_elapsed += 1
 
         return minutes_elapsed if fresh_oranges_count == 0 else -1
 
@@ -59,8 +60,12 @@ class TestSolution(unittest.TestCase):
         self.sol = Solution()
 
     def testOrangesRotting(self):
-        self.assertEqual(self.sol.orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]), 4)
-        self.assertEqual(self.sol.orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]]), -1)
+        self.assertEqual(
+            self.sol.orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]]), 4
+        )
+        self.assertEqual(
+            self.sol.orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]]), -1
+        )
         self.assertEqual(self.sol.orangesRotting([[0, 2]]), 0)
 
 
