@@ -41,6 +41,7 @@ class Solution:
                         if dist[(v, hops)] + weight < dist.get(
                             (i, hops + 1), MAX_INT
                         ):
+                            queue.append(i)
                             # on first loop, v = src, so distance from
                             # src to i is just the weight of the edge
                             # from src to i
@@ -54,8 +55,6 @@ class Solution:
                             # best answer
                             if i == dst:
                                 ans = min(ans, dist[(i, hops + 1)])
-                            if i not in queue:
-                                queue.append(i)
 
             hops += 1
 
@@ -348,6 +347,30 @@ class TestSolution(unittest.TestCase):
                 4,
             ),
             11,
+        )
+        self.assertEqual(
+            self.sol.findCheapestPrice(
+                10,
+                [
+                    [0, 1, 20],
+                    [1, 2, 20],
+                    [2, 3, 30],
+                    [3, 4, 30],
+                    [4, 5, 30],
+                    [5, 6, 30],
+                    [6, 7, 30],
+                    [7, 8, 30],
+                    [8, 9, 30],
+                    [0, 2, 9999],
+                    [2, 4, 9998],
+                    [4, 7, 9997],
+                ],
+                0,
+                9,
+                4,
+            ),
+            30054,
+            # 0 -> 2 -> 4 -> 7 -> 8 -> 9
         )
 
 
