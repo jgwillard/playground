@@ -1,4 +1,5 @@
 from collections import deque
+import math
 from typing import Deque, Dict, List, Tuple
 import unittest
 
@@ -7,7 +8,7 @@ class Solution:
     def findCheapestPrice(
         self, n: int, flights: List[List[int]], src: int, dst: int, k: int
     ) -> int:
-        MAX_INT = 10**4 + 1
+        INFINITY = math.inf
         # dict of edges from a node -- node: [(node, weight)]
         adjacency_list: Dict[int, List[Tuple[int, int]]] = {}
         for flight in flights:
@@ -26,7 +27,7 @@ class Solution:
         dist[(src, 0)] = 0
         # can only go k + 1 hops away from src
         hops = 0
-        ans = MAX_INT
+        ans = INFINITY
 
         while queue and hops < k + 1:
             size = len(queue)
@@ -39,7 +40,7 @@ class Solution:
                         i, weight = edge
 
                         if dist[(v, hops)] + weight < dist.get(
-                            (i, hops + 1), MAX_INT
+                            (i, hops + 1), INFINITY
                         ):
                             queue.append(i)
                             # on first loop, v = src, so distance from
@@ -58,7 +59,7 @@ class Solution:
 
             hops += 1
 
-        return ans if ans < MAX_INT else -1
+        return int(ans) if ans < INFINITY else -1
 
 
 class TestSolution(unittest.TestCase):
@@ -370,7 +371,6 @@ class TestSolution(unittest.TestCase):
                 4,
             ),
             30054,
-            # 0 -> 2 -> 4 -> 7 -> 8 -> 9
         )
 
 
