@@ -29,6 +29,7 @@ class Solution:
         hops = 0
         ans = INFINITY
 
+        # https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
         while queue and hops < k + 1:
             size = len(queue)
 
