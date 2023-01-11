@@ -13,9 +13,9 @@ class Solution:
             nodes.append((x - 1, y))
         if y > 0:
             nodes.append((x, y - 1))
-        if x < num_rows - 1:
+        if x < num_cols - 1:
             nodes.append((x + 1, y))
-        if y < num_cols - 1:
+        if y < num_rows - 1:
             nodes.append((x, y + 1))
         return nodes
 
@@ -24,10 +24,10 @@ class Solution:
         num_rows = len(heights[0])
         # record minimum effort required to reach each cell
         min_effort: List[List[float]] = [
-            [math.inf for j in range(num_cols)] for i in range(num_rows)
+            [math.inf for j in range(num_rows)] for i in range(num_cols)
         ]
         in_tree: List[List[bool]] = [
-            [False for j in range(num_cols)] for i in range(num_rows)
+            [False for j in range(num_rows)] for i in range(num_cols)
         ]
 
         x, y = (0, 0)
@@ -38,28 +38,36 @@ class Solution:
             # mark curent node as visited and iterate over adjacent nodes
             in_tree[x][y] = True
             adjacent_nodes = self._get_adjacent_nodes(x, y, num_cols, num_rows)
-            for adj_x, adj_y in adjacent_nodes:
-                weight = abs(heights[x][y] - heights[adj_x][adj_y])
+            for i, j in adjacent_nodes:
                 # min_effort is the maximum absolute difference in
-                # heights between two consecutive cells
-                # therefore, we just want the max of the currently
+                # heights between two consecutive cells in a path
+                # therefore, we just want the min of the currently
                 # recorded maximum height on this path and the current
-                # difference (weight)
-                if min_effort[adj_x][adj_y] > min_effort[x][y] + weight:
-                    min_effort[adj_x][adj_y] = min_effort[x][y] + weight
+                # difference (cost)
+                # NOTE: this differs slightly from vanilla Dijkstra's
+                # algorithm in that the cost function only tracks the
+                # highest-weighted edge in the path, rather than the
+                # total path weight, i.e.
+                # min(min_effort[adj_x][adj_y], min_effort[x][y] + cost)
+                cost = abs(heights[x][y] - heights[i][j])
+                # either the current cost is the highest encountered, or
+                # the cost of the path is the previous highest cost
+                max_difference = max(min_effort[x][y], cost)
+                # if the max difference encountered on the current path
+                # is lower than for previously explored paths, update
+                min_effort[i][j] = min(min_effort[i][j], max_difference)
 
             # go through all the nodes not in the tree and add the one
             # with the shortest distance to the tree (can be sped up by
             # priority queue)
             dist: float = math.inf
-            for i in range(num_rows):
-                for j in range(num_cols):
+            for i in range(num_cols):
+                for j in range(num_rows):
                     if not in_tree[i][j] and min_effort[i][j] <= dist:
                         dist = min_effort[i][j]
                         x, y = i, j
 
-        print(min_effort)
-        return int(min_effort[num_rows - 1][num_cols - 1])
+        return int(min_effort[num_cols - 1][num_rows - 1])
 
 
 class TestSolution(unittest.TestCase):
@@ -71,7 +79,7 @@ class TestSolution(unittest.TestCase):
             self.sol.minimumEffortPath([[1, 2, 2], [3, 8, 2], [5, 3, 5]]), 2
         )
         self.assertEqual(
-            self.sol.minimumEffortPath([[1, 2, 3], [3, 8, 4], [5, 3, 5]]), 5
+            self.sol.minimumEffortPath([[1, 2, 3], [3, 8, 4], [5, 3, 5]]), 1
         )
         self.assertEqual(
             self.sol.minimumEffortPath(
@@ -84,6 +92,9 @@ class TestSolution(unittest.TestCase):
                 ]
             ),
             0,
+        )
+        self.assertEqual(
+            self.sol.minimumEffortPath([[1, 10, 6, 7, 9, 10, 4, 9]]), 9
         )
 
 
