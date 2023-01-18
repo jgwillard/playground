@@ -35,7 +35,8 @@ class Solution:
                 if indegree[neighbor] == 0:
                     indegree_zero_queue.append(neighbor)
 
-        return sorted_list
+        # if graph was not a DAG, return empty list
+        return sorted_list if len(sorted_list) == n else []
 
 
 class TestSolution(unittest.TestCase):
@@ -49,6 +50,7 @@ class TestSolution(unittest.TestCase):
             [0, 1, 2, 3],  # or [0,2,1,3]
         )
         self.assertEqual(self.sol.findOrder(1, []), [0])
+        self.assertEqual(self.sol.findOrder(3, [[1, 0], [1, 2], [0, 1]]), [])
 
 
 if __name__ == "__main__":
