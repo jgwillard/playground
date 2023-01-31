@@ -14,6 +14,17 @@ class Solution:
         indegree: Dict[str, int] = {letter: 0 for letter in unique_alphabet}
         indegree_zero_queue: Deque[str] = deque()
         sorted_list: List[str] = []
+
+        # step 0: in a valid alphabet, prefixes are always first, so
+        # detect if a word is followed by its prefix and return empty
+        for i, _ in enumerate(words):
+            if i == len(words) - 1:
+                break
+            if words[i].startswith(words[i + 1]) and len(words[i]) > len(
+                words[i + 1]
+            ):
+                return ""
+
         # step 1: convert words list to adjacency list
         # words should be grouped successively by letters they start
         # with, for example the first group consists of all the words
@@ -55,25 +66,33 @@ class Solution:
                     )
             letter_idx += 1
 
-        print(adjacency_list)
+        # if there's only one letter in the alphabet, return it
+        if len(adjacency_list) == 1:
+            return list(adjacency_list.keys())[0]
+
         # step 2: run Kahn's algorithm on the DAG to get a topo sort
         # compute indegree for each node
         for _, neighbors in adjacency_list.items():
             for neighbor in neighbors:
                 indegree[neighbor] += 1
-        print(indegree)
+
         # enqueue any nodes with indegree zero
         for node, _ in adjacency_list.items():
             if indegree[node] == 0:
                 indegree_zero_queue.append(node)
+
         while indegree_zero_queue:
             node = indegree_zero_queue.popleft()
             sorted_list.append(node)
             for neighbor in adjacency_list[node]:
+                # TODO remove edge from adjacentcy list so that after
+                # the loop, we can check for cycles
                 indegree[neighbor] -= 1
                 if indegree[neighbor] == 0:
                     indegree_zero_queue.append(neighbor)
 
+        print(adjacency_list)
+        print(sorted_list)
         return (
             "".join(sorted_list)
             if len(sorted_list) == len(adjacency_list)
@@ -92,6 +111,9 @@ class TestSolution(unittest.TestCase):
         self.assertEqual(self.sol.alienOrder(["z", "x"]), "zx")
         self.assertEqual(self.sol.alienOrder(["z", "x", "z"]), "")
         self.assertEqual(self.sol.alienOrder(["abc", "ab"]), "")
+        self.assertEqual(self.sol.alienOrder(["z", "z"]), "z")
+        # self.assertEqual(self.sol.alienOrder(["wrt", "wrtkj"]), "jkrtw")
+        self.assertEqual(self.sol.alienOrder(["abc", "xbd", "d", "c"]), "abxdc")
 
 
 if __name__ == "__main__":
