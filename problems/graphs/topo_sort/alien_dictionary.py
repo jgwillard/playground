@@ -7,7 +7,8 @@ import unittest
 class Solution:
     def alienOrder(self, words: List[str]) -> str:
         alphabet = reduce(lambda s, acc: s + acc, words, "")
-        unique_alphabet = set(alphabet)
+        # ensure unique alphabet is sorted list for deterministic output
+        unique_alphabet = sorted(set(alphabet))
         adjacency_list: Dict[str, List[str]] = {
             letter: [] for letter in unique_alphabet
         }
@@ -50,10 +51,9 @@ class Solution:
                         # first letter is always a single group
                         letter_idx == 0
                         or
-                        # previous letter of current word == previous
-                        # letter of next word
-                        words[word_idx][letter_idx - 1]
-                        == words[word_idx + 1][letter_idx - 1]
+                        # prefix of current word == prefix of next word
+                        words[word_idx][:letter_idx]
+                        == words[word_idx + 1][:letter_idx]
                     )
                     and
                     # current letters of each word do not equal each
@@ -85,19 +85,15 @@ class Solution:
             node = indegree_zero_queue.popleft()
             sorted_list.append(node)
             for neighbor in adjacency_list[node]:
-                # TODO remove edge from adjacentcy list so that after
-                # the loop, we can check for cycles
                 indegree[neighbor] -= 1
                 if indegree[neighbor] == 0:
                     indegree_zero_queue.append(neighbor)
+            # remove edge from adjacency list so that after the loop, we
+            # can check for cycles
+            del adjacency_list[node]
 
-        print(adjacency_list)
-        print(sorted_list)
-        return (
-            "".join(sorted_list)
-            if len(sorted_list) == len(adjacency_list)
-            else ""
-        )
+        # if graph has edges, there was at least one cycle, so no order
+        return "".join(sorted_list) if len(adjacency_list) == 0 else ""
 
 
 class TestSolution(unittest.TestCase):
@@ -112,7 +108,8 @@ class TestSolution(unittest.TestCase):
         self.assertEqual(self.sol.alienOrder(["z", "x", "z"]), "")
         self.assertEqual(self.sol.alienOrder(["abc", "ab"]), "")
         self.assertEqual(self.sol.alienOrder(["z", "z"]), "z")
-        # self.assertEqual(self.sol.alienOrder(["wrt", "wrtkj"]), "jkrtw")
+        self.assertEqual(self.sol.alienOrder(["ac", "ab", "zc", "zb"]), "aczb")
+        self.assertEqual(self.sol.alienOrder(["wrt", "wrtkj"]), "jkrtw")
         self.assertEqual(self.sol.alienOrder(["abc", "xbd", "d", "c"]), "abxdc")
 
 
