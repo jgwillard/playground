@@ -1,38 +1,44 @@
 from typing import Dict, List, Deque
-from collections import deque
 import unittest
 
 
 class Solution:
     def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
-        adjacency_list: Dict[int, List[int]] = [[] for _ in range(n)]
+        adjacency_list: Dict[int, List[int]] = {i: [] for i in range(n)}
         indegree: List[int] = [0 for _ in range(n)]
-        leaf_nodes_queue: Deque[int] = deque()
+        leaves: List[int] = []
 
         for a, b in edges:
             adjacency_list[a].append(b)
             adjacency_list[b].append(a)
 
-        for _, neighbors in enumerate(adjacency_list):
+        for _, neighbors in adjacency_list.items():
             for neighbor in neighbors:
                 indegree[neighbor] += 1
 
         for node, _ in enumerate(adjacency_list):
             if indegree[node] == 1:
-                leaf_nodes_queue.append(node)
+                leaves.append(node)
 
-        while leaf_nodes_queue:
-            node = leaf_nodes_queue.popleft()
-            for neighbor in adjacency_list[node]:
-                indegree[neighbor] -= 1
-                if indegree[neighbor] == 1:
-                    leaf_nodes_queue.append(neighbor)
+        # a tree can have at most 2 centroid nodes, so we successively
+        # trim leaves until only 2 or 1 nodes are left
+        while len(adjacency_list) > 2:
+            new_leaves = []
+            # go through all current leaves and trim them, decrementing
+            # the indegree of their neighbors
+            for leaf in leaves:
+                for neighbor in adjacency_list[leaf]:
+                    indegree[neighbor] -= 1
+                    # if a neighbor of a current leaf now has indegree 1
+                    # then it is one of the new leaves
+                    if indegree[neighbor] == 1:
+                        new_leaves.append(neighbor)
 
-            del adjacency_list[node]
+                del adjacency_list[leaf]
 
-            # TODO check if the two nodes in adjacency list point to each other
-            if len(adjacency_list) == 2:
-                return [node for node, _ in enumerate(adjacency_list)]
+            leaves = new_leaves
+
+        return [node for node in adjacency_list.keys()]
 
 
 class TestSolution(unittest.TestCase):
