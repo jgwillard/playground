@@ -20,22 +20,23 @@ class Solution:
     def cloneGraph(self, node: Optional["Node"]) -> Optional["Node"]:
         if not node:
             return None
-        visited: Dict[int, bool] = {}
+        visited: List[bool] = [False] * 100
         stack: List["Node"] = [node]
-        visited[node.val] = True
-        new_nodes: Dict[int, "Node"] = {node.val: Node(val=node.val)}
+        visited[node.val - 1] = True
+        new_nodes: List["Node"] = [Node()] * 100
+        new_nodes[node.val - 1] = Node(val=node.val)
 
         while stack:
             current_node = stack.pop()
-            new_node = new_nodes[current_node.val]
+            new_node = new_nodes[current_node.val - 1]
             for neighbor in current_node.neighbors:
-                if not neighbor.val in visited:
+                if not visited[neighbor.val - 1]:
                     stack.append(neighbor)
-                    visited[neighbor.val] = True
-                    new_nodes[neighbor.val] = Node(val=neighbor.val)
-                new_node.neighbors.append(new_nodes[neighbor.val])
+                    visited[neighbor.val - 1] = True
+                    new_nodes[neighbor.val - 1] = Node(val=neighbor.val)
+                new_node.neighbors.append(new_nodes[neighbor.val - 1])
 
-        return new_nodes[node.val]
+        return new_nodes[node.val - 1]
 
 
 class TestSolution(unittest.TestCase):
@@ -57,11 +58,15 @@ class TestSolution(unittest.TestCase):
         node_4.neighbors.append(node_3)
         result = self.sol.cloneGraph(node_1)
         self.assertNotEqual(result, node_1)
+        # NOTE must use assert statement rather than a TestCase method
+        # so that mypy will infer that `result` has to be a `Node` below
+        assert result is not None
         self.assertEqual(result.val, node_1.val)
         self.assertEqual(len(result.neighbors), len(node_1.neighbors))
         self.assertNotEqual(result.neighbors[0], node_1.neighbors[0])
         self.assertEqual(result.neighbors[0].val, node_1.neighbors[0].val)
         result_2 = self.sol.cloneGraph(None)
+        self.assertIsNone(result_2)
 
 
 if __name__ == "__main__":
