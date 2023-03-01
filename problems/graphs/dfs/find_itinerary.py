@@ -1,61 +1,81 @@
-from typing import Dict, List
+from copy import copy
+from typing import Dict, List, Tuple
 import unittest
 
 
 class Solution:
-    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+    def generate_adjacency_list_and_visited_list(
+        self, tickets: List[List[str]]
+    ) -> Tuple[Dict[str, List[str]], Dict[str, List[bool]]]:
+
         adjacency_list: Dict[str, List[str]] = {}
+        visited_list: Dict[str, List[bool]] = {}
+
         for ticket in tickets:
             if ticket[0] in adjacency_list:
                 adjacency_list[ticket[0]].append(ticket[1])
+                visited_list[ticket[0]].append(False)
             else:
                 adjacency_list[ticket[0]] = [ticket[1]]
+                visited_list[ticket[0]] = [False]
 
         # sort so last item is smallest
         for k, v in adjacency_list.items():
             adjacency_list[k] = sorted(v, reverse=True)
 
+        return (adjacency_list, visited_list)
+
+    def backtrack(
+        self,
+        stack: List[str],
+        adjacency_list: Dict[str, List[str]],
+        visited: Dict[str, List[bool]],
+    ) -> None:
+        if self.is_solution(stack, adjacency_list):
+            self.finished = True
+            self.solution = copy(stack)
+        else:
+            candidates = self.construct_candidates(stack, adjacency_list)
+            item = stack[-1]
+            for k, candidate in enumerate(candidates):
+                if not visited[item][k]:
+                    stack.append(candidate)
+                    visited[item][k] = True
+                    self.backtrack(stack, adjacency_list, visited)
+                    stack.pop()
+                    visited[item][k] = False
+                    if self.finished:
+                        return
+
+    def is_solution(
+        self, stack: List[str], adjacency_list: Dict[str, List[str]]
+    ) -> bool:
+        item = stack[-1]
+        return (
+            item not in adjacency_list or len(adjacency_list[item]) == 0
+        ) and len(stack) == len(self.tickets) + 1
+
+    def construct_candidates(
+        self, stack: List[str], adjacency_list: Dict[str, List[str]]
+    ) -> List[str]:
+        """Return all the items adjacent to the current top of stack"""
+        item = stack[-1]
+        return adjacency_list[item]
+
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        del self.solution
+        self.finished = False
+        self.tickets = tickets
+        adjacency_list, visited = self.generate_adjacency_list_and_visited_list(
+            tickets
+        )
+
         # we are given that we always start at JFK
         stack: List[str] = ["JFK"]
 
         print(adjacency_list.keys())
-        while stack:
-            # get top item of stack and then take its last adjacent item
-            item = stack[-1]
-            # if the adjacency list is empty, check if we have a
-            # finished itinerary: len(stack) == len(tickets) + 1
-            # and if we do, return stack
-            if item not in adjacency_list or len(adjacency_list[item]) == 0:
-                if len(stack) == len(tickets) + 1:
-                    return stack
-                else:
-                    # otherwise unwind the stack by popping the most
-                    # recent item and checking its adjacency list
-                    # if its adjacency list is empty, put the unwound
-                    # item back into the adjacency list and keep going
-                    # until we find a different choice to make
-                    # when we find a different choice, pop it off the
-                    # adjacency list and onto the stack and append the
-                    # unwound item to its original adjacency list and
-                    # leave inner loop
-                    while True:
-                        # print(stack)
-                        unwound_item = stack.pop()
-                        if not adjacency_list[stack[-1]]:
-                            adjacency_list[stack[-1]].append(unwound_item)
-                            continue
-                        else:
-                            stack.append(adjacency_list[stack[-1]].pop())
-                            # print(stack[-1])
-                            adjacency_list[stack[-2]].append(unwound_item)
-                            break
-            else:
-                # otherwise, add the next item to the stack
-                next_item = adjacency_list[item].pop()
-                stack.append(next_item)
-
-        # if an empty list is returned there was a problem with input
-        return []
+        self.backtrack(stack, adjacency_list, visited)
+        return self.solution
 
 
 class TestSolution(unittest.TestCase):
