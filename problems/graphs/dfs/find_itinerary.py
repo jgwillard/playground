@@ -1,4 +1,4 @@
-from copy import copy
+import copy
 from typing import Dict, List, Tuple
 import unittest
 
@@ -19,9 +19,9 @@ class Solution:
                 adjacency_list[ticket[0]] = [ticket[1]]
                 visited_list[ticket[0]] = [False]
 
-        # sort so last item is smallest
+        # sort so first item is lexically smallest
         for k, v in adjacency_list.items():
-            adjacency_list[k] = sorted(v, reverse=True)
+            adjacency_list[k] = sorted(v)
 
         return (adjacency_list, visited_list)
 
@@ -31,9 +31,9 @@ class Solution:
         adjacency_list: Dict[str, List[str]],
         visited: Dict[str, List[bool]],
     ) -> None:
-        if self.is_solution(stack, adjacency_list):
+        if self.is_solution(stack):
             self.finished = True
-            self.solution = copy(stack)
+            self.solution = copy.copy(stack)
         else:
             candidates = self.construct_candidates(stack, adjacency_list)
             item = stack[-1]
@@ -47,23 +47,19 @@ class Solution:
                     if self.finished:
                         return
 
-    def is_solution(
-        self, stack: List[str], adjacency_list: Dict[str, List[str]]
-    ) -> bool:
-        item = stack[-1]
-        return (
-            item not in adjacency_list or len(adjacency_list[item]) == 0
-        ) and len(stack) == len(self.tickets) + 1
+    def is_solution(self, stack: List[str]) -> bool:
+        return len(stack) == len(self.tickets) + 1
 
     def construct_candidates(
         self, stack: List[str], adjacency_list: Dict[str, List[str]]
     ) -> List[str]:
         """Return all the items adjacent to the current top of stack"""
         item = stack[-1]
-        return adjacency_list[item]
+        return adjacency_list[item] if item in adjacency_list.keys() else []
 
     def findItinerary(self, tickets: List[List[str]]) -> List[str]:
-        del self.solution
+        # reset
+        self.solution = []
         self.finished = False
         self.tickets = tickets
         adjacency_list, visited = self.generate_adjacency_list_and_visited_list(
@@ -73,7 +69,6 @@ class Solution:
         # we are given that we always start at JFK
         stack: List[str] = ["JFK"]
 
-        print(adjacency_list.keys())
         self.backtrack(stack, adjacency_list, visited)
         return self.solution
 
