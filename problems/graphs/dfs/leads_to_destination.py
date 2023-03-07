@@ -16,9 +16,25 @@ class Solution:
         while stack:
             node = stack.pop()
 
-            # if cycle is created return false (check for backedges)
+            # import pdb
 
-            # if no nodes are reachable, make sure node is destination
+            # pdb.set_trace()
+            for neighbor in adjacency_list[node]:
+                # if cycle is created return false (check for backedges
+                # and selfedges)
+                if neighbor in stack or neighbor == node:
+                    return False
+
+                # append all reachable nodes to the stack
+                if adjacency_list[neighbor]:
+                    for next_node in adjacency_list[neighbor]:
+                        stack.append(next_node)
+                # if no nodes are reachable, make sure node is
+                # destination
+                elif node != destination:
+                    return False
+
+        return True
 
 
 class TestSolution(unittest.TestCase):
@@ -37,6 +53,8 @@ class TestSolution(unittest.TestCase):
                 4, [[0, 1], [0, 2], [1, 3], [2, 3]], 0, 3
             )
         )
+        self.assertFalse(self.sol.leadsToDestination(2, [[0, 1], [1, 1]], 0, 1))
+        self.assertTrue(self.sol.leadsToDestination(2, [[0, 1]], 0, 1))
 
 
 if __name__ == "__main__":
