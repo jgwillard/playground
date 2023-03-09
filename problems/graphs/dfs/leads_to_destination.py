@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 import unittest
 
 
@@ -14,16 +14,21 @@ class Solution:
             adjacency_list[edge[0]].append(edge[1])
 
         stack: List[List[int]] = [[source]]
+        visited_stack: List[Dict[int, bool]] = [{source: True}]
         at_least_one_path = False
 
+        # import pdb
+
+        # pdb.set_trace()
         while stack:
             # get current path from stack
             path = stack.pop()
+            visited = visited_stack.pop()
             # check each vertex reachable from the last vertex in the
             # current path
             for v in adjacency_list[path[-1]]:
                 # detect back edge or self edge
-                if v in path:
+                if visited.get(v):
                     return False
                 # detect a path that ends not at destination
                 if not adjacency_list[v] and v != destination:
@@ -34,11 +39,14 @@ class Solution:
 
                 # make a copy of the current path
                 new_path = list(path)
+                new_visited = dict(visited)
                 # add a node that is reachable from the last vertex in
                 # the current path to the copy
                 new_path.append(v)
+                new_visited[v] = True
                 # put the new path on the stack
                 stack.append(new_path)
+                visited_stack.append(new_visited)
 
         return at_least_one_path
 
