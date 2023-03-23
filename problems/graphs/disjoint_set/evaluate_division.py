@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 import unittest
 
 
@@ -9,7 +9,21 @@ class Solution:
         values: List[float],
         queries: List[List[str]],
     ) -> List[float]:
-        pass
+        # build graph out of equations list
+        # ex: {
+        #       'a': { 'b': 2.0 },
+        #       'b': { 'a': 0.5, 'c': 3.0 },
+        #       'c' { 'b': 0.33 }
+        # }
+        graph: Dict[str, Dict[str, float]] = {}
+        for i, val in enumerate(values):
+            x, y = equations[i]
+            x_adj_list = graph.setdefault(x, {})
+            y_adj_list = graph.setdefault(y, {})
+            x_adj_list[y] = val
+            y_adj_list[x] = 1 / val
+
+        print(graph)
 
 
 class TestSolution(unittest.TestCase):
