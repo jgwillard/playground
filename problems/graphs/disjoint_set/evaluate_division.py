@@ -3,6 +3,29 @@ import unittest
 
 
 class Solution:
+    solutions: List[List[str]] = []
+    graph: Dict[str, Dict[str, float]] = {}
+    visited: Dict[str, bool] = {}
+    finished = False
+
+    def backtrack_dfs(self, path: List[str], dest: str):
+        item = path[-1]
+        if item == dest:
+            self.solutions.append(path)
+            self.finished = True
+        else:
+            for k, candidate in enumerate(self.graph[item]):
+                if not self.visited[candidate]:
+                    path.append(candidate)
+                    self.visited[candidate] = True
+                    self.backtrack_dfs(path, dest)
+                    self.visited[candidate] = False
+                    if self.finished:
+                        return
+
+    def process_solutions(self):
+        pass
+
     def calcEquation(
         self,
         equations: List[List[str]],
@@ -15,15 +38,26 @@ class Solution:
         #       'b': { 'a': 0.5, 'c': 3.0 },
         #       'c' { 'b': 0.33 }
         # }
-        graph: Dict[str, Dict[str, float]] = {}
         for i, val in enumerate(values):
             x, y = equations[i]
-            x_adj_list = graph.setdefault(x, {})
-            y_adj_list = graph.setdefault(y, {})
+            x_adj_list = self.graph.setdefault(x, {})
+            y_adj_list = self.graph.setdefault(y, {})
             x_adj_list[y] = val
             y_adj_list[x] = 1 / val
+            self.visited[x] = False
+            self.visited[y] = False
 
-        print(graph)
+        print(self.graph)
+        for query in queries:
+            source, dest = query
+            path: List[str] = [source]
+            self.visited[source] = True
+            self.backtrack_dfs(path, dest)
+            self.finished = False
+            self.visited[source] = False
+
+        print(self.solutions)
+        return self.process_solutions()
 
 
 class TestSolution(unittest.TestCase):
