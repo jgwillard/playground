@@ -11,15 +11,15 @@ class Solution:
         path: List[str],
         dest: str,
         graph: Dict[str, Dict[str, float]],
-        solutions: List[List[str]],
+        solution: List[str],
         visited: Dict[str, bool],
     ):
-        if dest not in graph:
-            solutions.append([])
-            return
         item = path[-1]
+        if dest not in graph or item not in graph:
+            return
         if item == dest:
-            solutions.append(copy.copy(path))
+            # mutates list that was passed in
+            solution[:] = copy.copy(path)
             self.finished = True
             return
         else:
@@ -27,7 +27,7 @@ class Solution:
                 if not visited[candidate]:
                     path.append(candidate)
                     visited[candidate] = True
-                    self.backtrack_dfs(path, dest, graph, solutions, visited)
+                    self.backtrack_dfs(path, dest, graph, solution, visited)
                     path.pop()
                     visited[candidate] = False
                     if self.finished:
@@ -81,7 +81,9 @@ class Solution:
             source, dest = query
             path: List[str] = [source]
             visited[source] = True
-            self.backtrack_dfs(path, dest, graph, solutions, visited)
+            solution: List[str] = []
+            self.backtrack_dfs(path, dest, graph, solution, visited)
+            solutions.append(solution)
             self.finished = False
             visited[source] = False
 
@@ -117,6 +119,15 @@ class TestSolution(unittest.TestCase):
             ),
             [0.50000, 2.00000, -1.00000, -1.00000],
         )
+        self.assertEqual(
+            self.sol.calcEquation(
+                [["a", "b"], ["c", "d"]],
+                [1.0, 1.0],
+                [["a", "c"], ["b", "d"], ["b", "a"], ["d", "c"]],
+            ),
+            [-1.00000, -1.00000, 1.00000, 1.00000],
+        )
+        # execute to ensure no key errors
         self.sol.calcEquation(
             [["x1", "x2"], ["x2", "x3"], ["x3", "x4"], ["x4", "x5"]],
             [3.0, 4.0, 5.0, 6.0],
@@ -129,14 +140,66 @@ class TestSolution(unittest.TestCase):
                 ["x9", "x9"],
             ],
         )
-        # TODO backtrack_dfs doesn't have a way of detecting no solution
-        self.assertEqual(
-            self.sol.calcEquation(
-                [["a", "b"], ["c", "d"]],
-                [1.0, 1.0],
-                [["a", "c"], ["b", "d"], ["b", "a"], ["d", "c"]],
-            ),
-            [-1.00000, -1.00000, 1.00000, 1.00000],
+        self.sol.calcEquation(
+            [
+                ["a", "b"],
+                ["a", "c"],
+                ["a", "d"],
+                ["a", "e"],
+                ["a", "f"],
+                ["a", "g"],
+                ["a", "h"],
+                ["a", "i"],
+                ["a", "j"],
+                ["a", "k"],
+                ["a", "l"],
+                ["a", "aa"],
+                ["a", "aaa"],
+                ["a", "aaaa"],
+                ["a", "aaaaa"],
+                ["a", "bb"],
+                ["a", "bbb"],
+                ["a", "ff"],
+            ],
+            [
+                1.0,
+                2.0,
+                3.0,
+                4.0,
+                5.0,
+                6.0,
+                7.0,
+                8.0,
+                9.0,
+                10.0,
+                11.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                3.0,
+                5.0,
+            ],
+            [
+                ["d", "f"],
+                ["e", "g"],
+                ["e", "k"],
+                ["h", "a"],
+                ["aaa", "k"],
+                ["aaa", "i"],
+                ["aa", "e"],
+                ["aaa", "aa"],
+                ["aaa", "ff"],
+                ["bbb", "bb"],
+                ["bb", "h"],
+                ["bb", "i"],
+                ["bb", "k"],
+                ["aaa", "k"],
+                ["k", "l"],
+                ["x", "k"],
+                ["l", "ll"],
+            ],
         )
 
 
