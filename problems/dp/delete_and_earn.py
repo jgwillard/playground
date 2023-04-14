@@ -1,10 +1,28 @@
-from typing import List
+from collections import defaultdict
+from typing import Dict, List
 import unittest
 
 
 class Solution:
     def deleteAndEarn(self, nums: List[int]) -> int:
-        pass
+        points: Dict[int, int] = defaultdict(int)
+        memo: Dict[int, int] = {}
+        max_num = 0
+        for num in nums:
+            points[num] += num
+            max_num = max(max_num, num)
+
+        def dp(i: int) -> int:
+            if i == 0:
+                return 0
+            if i == 1:
+                return points[1]
+            if i not in memo:
+                memo[i] = max(points[i] + dp(i - 2), dp(i - 1))
+
+            return memo[i]
+
+        return dp(max_num)
 
 
 class TestSolution(unittest.TestCase):
