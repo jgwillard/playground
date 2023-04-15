@@ -7,7 +7,7 @@ class Solution:
     # NOTE this problem is only a very slight variation on house robber:
     # the algorithm is identical except for some preparatory work to
     # create the necessary data structures
-    def deleteAndEarn(self, nums: List[int]) -> int:
+    def deleteAndEarnTopDown(self, nums: List[int]) -> int:
         # defaultdict will always default to 0, so we can iterate over
         # all numbers without key errors (unlike house robber, the data
         # will not necessarily contain all numbers 0-n)
@@ -39,6 +39,23 @@ class Solution:
             return memo[i]
 
         return dp(max_num)
+
+    def deleteAndEarn(self, nums: List[int]) -> int:
+        points: Dict[int, int] = defaultdict(int)
+
+        max_num = 0
+        for num in nums:
+            points[num] += num
+            max_num = max(max_num, num)
+
+        dp = [0] * (max_num + 1)
+        dp[0] = 0
+        dp[1] = points[1]
+
+        for i in range(2, max_num + 1):
+            dp[i] = max(points[i] + dp[i - 2], dp[i - 1])
+
+        return dp[max_num]
 
 
 class TestSolution(unittest.TestCase):
