@@ -8,8 +8,6 @@ class Solution:
 
     def construct_candidates(
         self,
-        solution_vector: List[bool],
-        data: List[str],
     ) -> List[bool]:
         return [True, False]
 
@@ -17,14 +15,12 @@ class Solution:
         self,
         candidate: bool,
         solution_vector: List[bool],
-        data: List[str],
     ):
         solution_vector.append(candidate)
 
     def unmake_move(
         self,
         solution_vector: List[bool],
-        data: List[str],
     ):
         solution_vector.pop()
 
@@ -43,11 +39,11 @@ class Solution:
         if self.is_solution(solution_vector, data):
             self.process_solution(solution_vector, data)
         else:
-            candidates = self.construct_candidates(solution_vector, data)
+            candidates = self.construct_candidates()
             for candidate in candidates:
-                self.make_move(candidate, solution_vector, data)
+                self.make_move(candidate, solution_vector)
                 self.backtrack(solution_vector, data)
-                self.unmake_move(solution_vector, data)
+                self.unmake_move(solution_vector)
 
     def print_subsets(self, data: List[str]):
         self.backtrack([], data)
