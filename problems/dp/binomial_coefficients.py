@@ -13,9 +13,20 @@ class Solution:
             return 1
         if k == n:
             return 1
-        return self.binomial_coefficients(
-            n - 1, k
-        ) + self.binomial_coefficients(n - 1, k - 1)
+
+        dp = [[0] * (n + 1) for _ in range(n + 1)]
+
+        # top of triangle is top left of grid so set values in top row
+        # to 1 and set values in leftmost column to 1
+        for i in range(n + 1):
+            dp[i][0] = 1
+            dp[0][i] = 1
+
+        for i in range(1, n + 1):
+            for j in range(1, n + 1 - i):
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+
+        return dp[n - k][k]
 
 
 class TestSolution(unittest.TestCase):
@@ -48,6 +59,11 @@ class TestSolution(unittest.TestCase):
             self.sol.binomial_coefficients(1234, 1234),
             1,
             "n choose n = 1, exactly one way to choose n elements from a set of n elements",
+        )
+
+        # big number (blows stack of recursive implementation)
+        self.assertEqual(
+            self.sol.binomial_coefficients(1234, 7), 849907813223133456
         )
 
 
