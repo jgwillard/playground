@@ -31,6 +31,7 @@ class TestSolution(unittest.TestCase):
         self.assertTrue(self.sol.is_shuffle("cat", "dog", "catdog"))
         self.assertTrue(self.sol.is_shuffle("cat", "dog", "cadogt"))
         self.assertTrue(self.sol.is_shuffle("cat", "dog", "cadotg"))
+        self.assertFalse(self.sol.is_shuffle("cat", "dog", "caodtg"))
 
 
 if __name__ == "__main__":
