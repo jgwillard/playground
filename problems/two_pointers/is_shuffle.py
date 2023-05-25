@@ -19,11 +19,15 @@ class Solution:
         m = len(y)
         dp = [[False] * (m + 1) for _ in range(n + 1)]
         dp[0][0] = True
-        for i in range(n):
-            dp[i + 1][m] = z[i + m] == x[i]
-        for j in range(m):
-            dp[n][j + 1] = z[j + n] == y[j]
+        for i in range(1, n + 1):
+            dp[i][0] = z[i + m - 1] == x[i - 1]
+        for j in range(1, m + 1):
+            dp[0][j] = z[j + n - 1] == y[j - 1]
+        # for i in range(1, n):
+        #     for j in range(1, m):
+        #         dp[i][j]
         print(dp)
+        print("\n".join(["\t".join([str(cell) for cell in row]) for row in dp]))
         return dp[n][m]
 
 
@@ -41,7 +45,8 @@ class TestSolution(unittest.TestCase):
         # self.assertTrue(self.sol.is_shuffle("ss", "o", "sos"))
         # self.assertTrue(self.sol.is_shuffle("sos", "", "sos"))
         # self.assertTrue(self.sol.is_shuffle("", "sos", "sos"))
-        self.assertTrue(self.sol.is_shuffle("cat", "dog", "catdog"))
+        # self.assertTrue(self.sol.is_shuffle("cat", "dog", "catdog"))
+        self.assertTrue(self.sol.is_shuffle("cat", "cat", "catcat"))
         # self.assertTrue(self.sol.is_shuffle("cat", "dog", "cadogt"))
         # self.assertTrue(self.sol.is_shuffle("cat", "dog", "cadotg"))
         # self.assertFalse(self.sol.is_shuffle("cat", "dog", "caodtg"))
