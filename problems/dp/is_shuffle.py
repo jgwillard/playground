@@ -1,3 +1,4 @@
+from functools import cache
 import unittest
 
 
@@ -9,6 +10,7 @@ class Solution:
         # s(3, 2) -> catdo, cat, do AND z[5] == y[2]
         # s(3, 1) -> catd, cat, d AND z[4] == y[1]
         # s(3, 0) -> cat, cat, AND z[1..3] == x[1..3]
+        @cache
         def s(i, j):
             if i == 0:
                 return y[0:j] == z[0 : i + j]
