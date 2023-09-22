@@ -3,7 +3,7 @@ import unittest
 
 
 class Solution:
-    def is_shuffle(self, x: str, y: str, z: str) -> bool:
+    def is_shuffle_top_down(self, x: str, y: str, z: str) -> bool:
 
         # defines the following process for x = cat, y = dog, z = catdog
         # s(3, 3) -> catdog, cat, dog AND z[6] == y[3]
@@ -21,6 +21,26 @@ class Solution:
             )
 
         return s(len(x), len(y))
+
+    def is_shuffle(self, x: str, y: str, z: str):
+        n = len(x)
+        m = len(y)
+        s = [[False for _ in range(m)] for _ in range(n)]
+
+        for i in range(n):
+            s[0][i] = True
+
+        for j in range(m):
+            s[j][0] = True
+
+        for i in range(1, n):
+            for j in range(1, m):
+                print(i, j)
+                s[i][j] = (s[i - 1][j] and z[i + j - 1] == x[i - 1]) or (
+                    s[i][j - 1] and z[i + j - 1] == y[j - 1]
+                )
+
+        print(s)
 
 
 class TestSolution(unittest.TestCase):
