@@ -25,22 +25,21 @@ class Solution:
     def is_shuffle(self, x: str, y: str, z: str):
         n = len(x)
         m = len(y)
-        s = [[False for _ in range(m)] for _ in range(n)]
+        s = [[False for _ in range(m + 1)] for _ in range(n + 1)]
 
-        for i in range(n):
-            s[0][i] = True
+        for i in range(n + 1):
+            s[i][0] = True
 
-        for j in range(m):
-            s[j][0] = True
+        for j in range(m + 1):
+            s[0][j] = True
 
-        for i in range(1, n):
-            for j in range(1, m):
-                print(i, j)
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
                 s[i][j] = (s[i - 1][j] and z[i + j - 1] == x[i - 1]) or (
                     s[i][j - 1] and z[i + j - 1] == y[j - 1]
                 )
 
-        print(s)
+        return s[n][m]
 
 
 class TestSolution(unittest.TestCase):
