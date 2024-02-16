@@ -19,18 +19,17 @@ class Solution:
         memo = {i: {} for i in range(n)}
 
         def dp(i, day):
-            print(i, day)
             if day == d:
                 return hardestJobRemaining[i]
-                # hardest = 0
-                # for j in range(i, n):
-                #     hardest = max(hardest, jobDifficulty[j])
-                # return hardest
 
             best = math.inf
             hardest = 0
             if memo.get(i) is None or memo.get(i).get(day) is None:
-                for j in range(i, n - d - day):
+                # try every possible job while leaving at least one job
+                # for each remaining day (i.e. on day 3 of 7 with 10
+                # jobs to do, try up to first 10 - (7 - 3) = 6 jobs)
+                days_remaining = d - day
+                for j in range(i, n - days_remaining):
                     hardest = max(hardest, jobDifficulty[j])
                     best = min(best, hardest + dp(j + 1, day + 1))
 
@@ -38,9 +37,7 @@ class Solution:
 
             return memo[i][day]
 
-        ret = dp(0, 1)
-        print(memo)
-        return ret
+        return dp(0, 1)
 
 
 class TestSolution(unittest.TestCase):
